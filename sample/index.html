@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" ng-app="sampleApp">
+<head>
+	<meta charset="utf-8">
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+</body>
+<script src="../dist/ainur.bundled.min.js"></script>
+<script src="app/auth.js"></script>
+<script src="app/login/state.js"></script>
+<script src="app/main/state.js"></script>
+<script src="app/main/music/state.js"></script>
+<script src="app/main/movie/state.js"></script>
+<script src="app/main/home/state.js"></script>
+<script>
+	ainur.config(function()
+	{
+		var router = ainur.require('ainur.router');
+		//var auth = ainur.require('auth');
+		
+		var redirect = function()
+		{
+			//router(auth.loggedIn ? '/home' : '/login');
+			router('/home');
+		};
+
+		router('/', redirect);
+		router('', redirect);
+	});
+
+	ainur.run();
+
+</script>
+</html>
