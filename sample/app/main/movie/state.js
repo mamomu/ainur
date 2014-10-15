@@ -10,5 +10,9 @@ ainur.state(
 	name: 'main.movie',
 	url: '/movie',
 	view: 'MainMovieView',
-	el: '[data-state-view="main"]'
+	el: '[data-state-view="main"]',
+	onBeforeEnter: function()
+	{
+		return false;
+	}
 });

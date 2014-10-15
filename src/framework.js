@@ -63,12 +63,14 @@ var ainur = {};
 
 	ainur.define('ainur.rivets', _.constant(rivets));
 
+	routie.evaluate = routie.reload;
+	routie.reload = function(){};
 	ainur.define('ainur.router', _.constant(routie));
 
 	ainur.define('ainur.ajax', _.constant(function(url, data, method)
 	{
-		var Promise = ainur.require('ainur.promise');
-		var deferred = Promise.defer();
+		var defer = ainur.require('ainur.defer');
+		var deferred = defer();
 
 		$.ajax(
 		{
@@ -88,27 +90,30 @@ var ainur = {};
 		return deferred.promise;
 	}));
 
-	var Promise = ayepromise;
-
-	Promise.rejected = function(result)
+	var defer = function()
 	{
-		var deferred = Promise();
+		return ayepromise.defer();
+	};
+
+	defer.rejected = function(result)
+	{
+		var deferred = defer();
 		deferred.reject(result);
 		return deferred.promise;
 	};
 
-	Promise.resolved = function(result)
+	defer.resolved = function(result)
 	{
-		var deferred = Promise();
+		var deferred = defer();
 		deferred.resolve(result);
 		return deferred.promise;
 	};
 
-	ainur.define('ainur.promise', _.constant(Promise));
+	ainur.define('ainur.defer', _.constant(defer));
 
 	var _config = [];
 	var _appRunning = false;
-	var _runDeferred = Promise.defer();
+	var _runDeferred = defer();
 
 	ainur.config = function(func)
 	{
@@ -124,10 +129,17 @@ var ainur = {};
 
 	ainur.run = function()
 	{
-		_appRunning = true;
-		var func;
-		while(func = _config.pop()) { func(); };
-		setTimeout(function(){ _runDeferred.resolve(); }, 5);
+		if(!_appRunning)
+		{
+			_appRunning = true;
+
+			var router = ainur.require('ainur.router');
+			var func; while(func = _config.pop()) { func(); };
+
+			router.evaluate();
+
+			setTimeout(function(){ _runDeferred.resolve(); }, 5);
+		}
 	};
 
 	ainur.run.then = function(){ _runDeferred.promise.then.apply(_runDeferred.promise, arguments); };

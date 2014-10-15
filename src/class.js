@@ -1,6 +1,6 @@
 ainur.define('ainur.class', function()
 {
-	var Promise = ainur.require('ainur.promise');
+	var defer = ainur.require('ainur.defer');
 
 	return Class.extend(
 	{
@@ -36,7 +36,7 @@ ainur.define('ainur.class', function()
 
 				promises.forEach(function(name)
 				{
-					deferredMap[name] = Promise.defer();
+					deferredMap[name] = defer();
 					promiseMap[name] = deferredMap[name].promise;
 				});
 

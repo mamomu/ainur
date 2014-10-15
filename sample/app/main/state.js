@@ -10,9 +10,5 @@ ainur.state(
 	name: 'main',
 	abstract: true,
 	view: 'MainView',
-	el: 'body',
-	onBeforeEnter: function()
-	{
-		//return false;
-	}
+	el: 'body'
 });

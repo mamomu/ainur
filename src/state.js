@@ -1,7 +1,7 @@
 ainur.define('ainur.stateManager', function()
 {
 	var router = ainur.require('ainur.router');
-	var Promise = ainur.require('ainur.promise');
+	var defer = ainur.require('ainur.defer');
 
 	function getDiffIndex(a, b)
 	{
@@ -49,7 +49,7 @@ ainur.define('ainur.stateManager', function()
 				}
 				else if(beforeEnterReturn === false)
 				{
-					return Promise.rejected();
+					return defer.rejected();
 				}
 				else
 				{
@@ -64,8 +64,19 @@ ainur.define('ainur.stateManager', function()
 		_exit: function()
 		{
 			var that = this;
-			this._view.destroy();
-			return this._view.promises.destroyed.then(function()
+			var promise;
+
+			if(this._view)
+			{
+				this._view.destroy();
+				promise = this._view.promises.destroyed;
+			}
+			else
+			{
+				promise = defer.resolved();
+			}
+
+			return promise.then(function()
 			{
 				that._view = null;
 				if(that.onExit) that.onExit();
@@ -73,66 +84,105 @@ ainur.define('ainur.stateManager', function()
 		}
 	});
 
-
 	var stateManager = ainur.require('ainur.class').extend(
 	{
 		states: {},
 		currentState: null,
-		destroyUpToNode: function(nodeIndex)
+		exitStatesUpTo: function(nodeIndex)
 		{
-			if(this.currentState)
+			if(!this.currentState) return defer.resolved();
+			
+			var that = this;
+			var deferred = defer();
+			var currentStateFamily = this.currentState.name.split('.');
+			var i = currentStateFamily.length;
+			
+			var next = function()
 			{
-				var currentStateFamily = this.currentState.split('.');
-
-				for(var i = currentStateFamily.length - 1; i >= nodeIndex; i--)
+				i--;
+				
+				if(i > nodeIndex - 1)
 				{
 					var stateName = currentStateFamily.slice(0, i + 1).join('.');
-					this.states[stateName]._exit();
-				}
-			}
-		},
-		change: function(newState, debug)
-		{
-			if(this.currentState === newState) return;
-
-			var that = this;
-			var newStateFamily = newState.split('.');
-			var diffIndex = this.currentState ? getDiffIndex(this.currentState, newState) : 0;
-
-			this.destroyUpToNode(diffIndex);
-
-			var next = function (i)
-			{
-				if(i < newStateFamily.length)
-				{
-					var stateName = newStateFamily.slice(0, i + 1).join('.');
-
-					console.log(i, stateName, debug);
-
+					
 					if(that.states[stateName])
 					{
-						that.states[stateName]._enter().then(function()
-						{
-							next(diffIndex + 1);
-						},
-						function()
-						{
-							that.destroyUpToNode(0);
-							this.currentState = null;
-						});
+						that.states[stateName]._exit().then(next);
 					}
 					else
 					{
-						next(diffIndex + 1);
+						next();
 					}
 				}
 				else
 				{
-					this.currentState = newState;
+					deferred.resolve();
 				}
-			}
+			};
 
-			next(diffIndex);
+			next();
+
+			return deferred.promise;
+		},
+		enterStatesFrom: function(nodeIndex, newStateName)
+		{
+			var that = this;
+			var deferred = defer();
+			var newStateFamily = newStateName.split('.');
+			var i = nodeIndex - 1;
+			
+			var next = function()
+			{
+				i++;
+
+				if(i < newStateFamily.length)
+				{
+					var stateName = newStateFamily.slice(0, i + 1).join('.');
+					
+					if(that.states[stateName])
+					{
+						that.currentState = that.states[stateName];
+						that.states[stateName]._enter().then(next, function(){ deferred.reject(); });
+					}
+					else
+					{
+						that.currentState = { name: stateName };
+						next();
+					}
+				}
+				else
+				{
+					deferred.resolve();
+				}
+			};
+
+			next();
+
+			return deferred.promise;
+		},
+		change: function(newStateName, debug)
+		{
+			if(this.currentState && this.currentState.name === newStateName) return;
+
+			var that = this;
+			var newState = this.states[newStateName];
+			var diffIndex = this.currentState ? getDiffIndex(this.currentState.name, newState.name) : 0;
+
+			this.exitStatesUpTo(diffIndex)
+			.then(function()
+			{
+				return that.enterStatesFrom(diffIndex, newState.name);
+			})
+			.then(function()
+			{
+				that.currentState = newState;
+			}, function()
+			{
+				that.exitStatesUpTo(0).then(function()
+				{
+					that.currentState = null;
+				});
+			});
 		},
 		define: function(definition)
 		{
@@ -149,18 +199,14 @@ ainur.define('ainur.stateManager', function()
 					{
 						router(state.url, function()
 						{
-							ainur.run.then(function()
-							{
-								if(that.currentState === state.name) return;
-								that.change(state.name);
-							});
+							that.change(state.name);
 						});
 					});
 				}
 			}
 			else
 			{
-				throw 'State already defined';
+				throw 'State ' + definition.name + ' already defined';
 			}
 		}
 	});

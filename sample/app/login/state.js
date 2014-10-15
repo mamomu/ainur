@@ -22,11 +22,7 @@ ainur.state(
 	name: 'login',
 	url: '/login',
 	view: 'LoginView',
-	el: 'body',
-	onEnter: function()
-	{
-		console.log('enter login 1');
-	}
+	el: 'body'
 });
 
 ainur.state(
@@ -34,9 +30,5 @@ ainur.state(
 	name: 'login2',
 	url: '/login2',
 	view: 'LoginView',
-	el: 'body',
-	onEnter: function()
-	{
-		console.log('enter login 2');
-	}
+	el: 'body'
 });
