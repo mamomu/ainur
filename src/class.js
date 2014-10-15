@@ -1,6 +1,6 @@
-ainur.define('ainur.class', function()
+ainur.define('aClass', function()
 {
-	var defer = ainur.require('ainur.defer');
+	var defer = ainur.require('aDefer');
 
 	return Class.extend(
 	{

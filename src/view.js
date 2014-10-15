@@ -1,11 +1,10 @@
-ainur.define('ainur.view', function()
+ainur.define('aView', function()
 {
-	var ajax = ainur.require('ainur.ajax');
-	var rivets = ainur.require('ainur.rivets');
+	var ajax = ainur.require('aAjax');
 
 	var templates = {};
 
-	return ainur.require('ainur.class').extend(
+	return ainur.require('aClass').extend(
 	{
 		template: null,
 		templateUrl: null,

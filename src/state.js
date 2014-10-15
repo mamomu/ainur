@@ -1,7 +1,7 @@
-ainur.define('ainur.stateManager', function()
+ainur.define('aStateManager', function()
 {
-	var router = ainur.require('ainur.router');
-	var defer = ainur.require('ainur.defer');
+	var router = ainur.require('aRouter');
+	var defer = ainur.require('aDefer');
 
 	function getDiffIndex(a, b)
 	{
@@ -21,7 +21,7 @@ ainur.define('ainur.stateManager', function()
 		return -1;
 	}
 
-	var RouteClass = ainur.require('ainur.class').extend(
+	var RouteClass = ainur.require('aClass').extend(
 	{
 		_enter: function()
 		{
@@ -84,7 +84,7 @@ ainur.define('ainur.stateManager', function()
 		}
 	});
 
-	var stateManager = ainur.require('ainur.class').extend(
+	var stateManager = ainur.require('aClass').extend(
 	{
 		states: {},
 		currentState: null,

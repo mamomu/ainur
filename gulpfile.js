@@ -12,15 +12,20 @@ var sourceFiles =
 	'src/lib/underscore-min.js',
 	'src/lib/zepto.min.js',
 	'src/framework.js',
+	'src/moduleManager.js',
 	'src/class.js',
+	'src/defer.js',
+	'src/ajax.js',
+	'src/router.js',
 	'src/state.js',
-	'src/view.js'
+	'src/view.js',
+	'src/helpers.js'
 ];
 
 gulp.task('default', [], function()
 {
 	return gulp.src(sourceFiles)
 					.pipe(concat('ainur.bundled.min.js'))
-					//.pipe(uglify())
+					.pipe(uglify())
 					.pipe(gulp.dest('./dist/'));
 });

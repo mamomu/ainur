@@ -16,7 +16,7 @@
 <script>
 	ainur.config(function()
 	{
-		var router = ainur.require('ainur.router');
+		var router = ainur.require('aRouter');
 		//var auth = ainur.require('auth');
 		
 		var redirect = function()
@@ -29,7 +29,7 @@
 		router('', redirect);
 	});
 
-	ainur.run();
+	ainur.bootstrap();
 
 </script>
 </html>

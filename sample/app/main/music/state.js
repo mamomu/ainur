@@ -1,6 +1,6 @@
 ainur.class(
 {
-	$parent: 'ainur.view',
+	$parent: 'aView',
 	$name: 'MainMusicView',
 	templateUrl: 'app/main/music/template.html'
 });

@@ -1,15 +1,12 @@
 ainur.class(
 {
-	$parent: 'ainur.view',
+	$parent: 'aView',
 	$name: 'LoginView',
 	templateUrl: 'app/login/template.html',
 	login: function()
 	{
-		var router = ainur.require('ainur.router');
-		var auth = ainur.require('auth');
-
-		auth.loggedIn = true;
-		router('/home');
+		ainur.require('auth').login();
+		ainur.require('aRouter')('/home');
 	},
 	setup: function()
 	{

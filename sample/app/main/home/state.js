@@ -1,6 +1,6 @@
 ainur.class(
 {
-	$parent: 'ainur.view',
+	$parent: 'aView',
 	$name: 'MainHomeView',
 	templateUrl: 'app/main/home/template.html'
 });
