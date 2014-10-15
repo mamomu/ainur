@@ -1,9 +1,20 @@
 ainur
 =====
 
-WebApp boilerplate including some tools and structure
+Micro toolset/library for SPA development, (being) built with existing small libraries.
 
-### I'm looking for help to document and develop this thing!
+
+Current features:
+- Promises (https://github.com/cburgmer/ayepromise)
+- Class Inheritance (http://ejohn.org/blog/simple-javascript-inheritance)
+- DOM Manipulation and Ajax (http://zeptojs.com)
+- Two-way data-binding (http://rivetsjs.com)
+- Events (https://github.com/scottcorgan/tiny-emitter)
+- Route Handling (http://projects.jga.me/routie/)
+- UI/Route State Handling (myself)
+- Application Lifecyle (myself)
+
+### I'm looking for help to develop and document this!
 
 ## Docs
 
